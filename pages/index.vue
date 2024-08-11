@@ -1,61 +1,83 @@
 <script setup lang="ts">
-import type { Strapi4ResponseMany } from '@nuxtjs/strapi';
-
-const { find } = useStrapi();
-
-const { apiRequest } = useApi();
-
-type TService = {
-  duration: number;
-  name: string;
-  price: number;
-};
-
 definePageMeta({
   middleware: 'auth',
 });
 
-/* const {
-  data: services,
-  pending,
-  refresh,
-  error,
-} = await useAsyncData('service', () => find<TService[]>('services'), {
-  server: false,
-}); */
+const user = useStrapiUser();
 
-const {
-  data: services,
-  pending,
-  refresh,
-  error,
-} = await useAsyncData(() =>
-  apiRequest<Strapi4ResponseMany<TService[]>>('/services'),
-);
+const date = ref(new Date());
 
-/* console.log(services1.value?.data); */
-
-/* const el = ref<HTMLElement | null>(null);
-const container = ref<HTMLElement | null>(null);
-
-const disabled = ref(false);
-const { x, y, style } = useDraggable(el, {
-  initialValue: { x: 40, y: 40 },
-  containerElement: container,
-}); */
+const attrs = ref([
+  {
+    highlight: {
+      key: 'today',
+      color: 'yellow',
+      fillMode: 'outline',
+    },
+    dot: {
+      color: 'yellow',
+    },
+    dates: new Date(),
+  },
+]);
 </script>
 <template>
-  <!-- <p>
-    {{ services1.data }}
-  </p> -->
-  <div v-if="services" ref="container" class="container mx-auto">
-    <div v-for="(item, index) in services.data" :key="index">
-      <p>{{ item.attributes.name }}</p>
-      <p>{{ item.attributes.price }}</p>
-      <p>{{ item.attributes.duration }}</p>
-    </div>
-    <!-- <button ref="el" :style="[style, 'position: fixed', 'width: 400px']">
-      Faça sua marcação{{ x }}, {{ y }}
-    </button> -->
+  <HeroBanner />
+
+  <div class="fixed bottom-8 right-8">
+    <MyButton
+      v-if="user"
+      class="aspect-[1/1] rounded-full bg-white md:hidden"
+      icon="i-heroicons-plus-circle-20-solid"
+      variant="primary"
+    >
+      <i class="i-heroicons-calendar-days-solid text-4xl transition-all"></i>
+    </MyButton>
   </div>
+
+  <div>
+    <client-only>
+      <h2>Calendar</h2>
+      <VCalendar v-model="date" />
+      <h2>Date Picker</h2>
+      <VDatePicker v-model="date" :attributes="attrs" />
+    </client-only>
+  </div>
+
+  <ServiceBlock />
 </template>
+
+<style>
+/* .vc-day-content {
+  @apply text-black;
+} */
+
+/* 50: '#feffe7',
+          100: '#fbffc1',
+          200: '#fcff86',
+          300: '#fffc41',
+          400: '#ffee0e',
+          500: '#fddf01', //base
+          600: '#d0a600',
+          700: '#a67702',
+          800: '#895d0a',
+          900: '#744c0f',
+          950: '#442804', */
+
+.vc-yellow {
+  --vc-accent-50: #feffe7;
+  --vc-accent-100: #fbffc1;
+  --vc-accent-200: #fcff86;
+  --vc-accent-300: #fffc41;
+  --vc-accent-400: #ffee0e;
+  --vc-accent-500: #fddf01;
+  --vc-accent-600: #d0a600;
+  --vc-accent-700: #a67702;
+  --vc-accent-800: #895d0a;
+  --vc-accent-900: #744c0f;
+  --vc-accent-950: #442804;
+}
+/* .is-today .vc-day-content {
+  @apply border-yellow-200;
+} */
+</style>

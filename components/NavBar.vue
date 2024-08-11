@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useDraggable } from '@vueuse/core';
+
 const route = useRoute();
 const { logout } = useStrapiAuth();
 const user = useStrapiUser();
@@ -45,101 +47,114 @@ const user = useStrapiUser();
   ],
 ]); */
 
-const items = computed(() => {
+const dropdownItems = computed(() => {
   return [
     {
-      label: 'Profile',
+      label: 'Perfil',
       icon: 'i-heroicons-user-circle-20-solid',
+      href: '/profile',
     },
     {
-      label: 'Edit',
-      icon: 'i-heroicons-pencil-square-20-solid',
-      click: () => {
-        console.log('Edit');
-      },
-    },
-    {
-      label: 'Logout',
+      label: 'Terminar sessão',
       icon: 'i-heroicons-arrow-right-circle-20-solid',
-      click: () => {
+      click: async () => {
+        await navigateTo('/login');
         logout();
-        navigateTo('/login');
       },
       hide: !user.value,
     },
   ];
 });
+
+const links = [
+  {
+    label: 'Sobre nós',
+    href: `${route.path.startsWith('/dev') ? '/dev' : ''}/components/horizontal-navigation`,
+  },
+  {
+    label: 'Serviços',
+    href: '/components/command-palette',
+  },
+  {
+    label: 'Contacte-nos',
+    href: '/components/command-palette',
+  },
+];
+
+const isMenuOpen = ref(false);
+
+const toggleMenu = () => {
+  isMenuOpen.value = !isMenuOpen.value;
+};
 </script>
 
 <template>
   <div class="sticky top-0 z-10">
     <nav class="bg-gray-800">
       <div
-        class="container mx-auto py-8 flex items-center gap-20 transition-all duration-300"
+        class="container mx-auto flex h-20 items-center gap-8 py-2 transition-all duration-300"
         :class="user ? 'justify-between' : 'justify-center'"
       >
         <NuxtLink
           to="/"
-          class="overflow-hidden rounded shadow-yellow-500 shadow-logo"
+          class="shrink-0 overflow-hidden rounded shadow-logo shadow-yellow-500"
         >
           <NuxtImg class="rounded" src="./logo.webp" alt="Logo" height="50" />
         </NuxtLink>
 
-        <!-- plus or booking icon -->
+        <button class="md:hidden" @click="toggleMenu">
+          <i
+            class="i-heroicons-bars-3-bottom-right-20-solid block cursor-pointer text-4xl text-white"
+          ></i>
+        </button>
+        <div
+          class="absolute right-0 top-20 flex h-[calc(100dvh-5rem)] w-full grow flex-col items-end gap-8 bg-gray-950 p-6 md:static md:h-auto md:flex-row md:items-center md:justify-between md:bg-inherit md:p-0"
+          :class="isMenuOpen ? 'block' : 'max-md:hidden'"
+        >
+          <ul class="flex flex-col items-end md:flex-row md:items-center">
+            <li v-for="(link, index) in links" :key="index">
+              <NuxtLink
+                :to="link.href"
+                class="block rounded px-4 py-2 text-lg text-white hover:bg-gray-600"
+              >
+                {{ link.label }}
+              </NuxtLink>
+            </li>
+          </ul>
 
-        <MyButton
-          v-if="user"
-          label="Faça a sua reserva"
-          class="btn-secondary"
-          icon="i-heroicons-plus-circle-20-solid"
-        />
+          <div class="flex flex-col items-end gap-8 md:flex-row md:gap-4">
+            <MyButton
+              v-if="user"
+              class="max-sm:hidden"
+              icon="i-heroicons-plus-circle-20-solid"
+              variant="primary"
+              ><p class="hidden max-md:block lg:block">Faça a sua reserva</p>
+              <i
+                class="i-heroicons-calendar-days-solid text-2xl transition-all"
+              ></i>
+            </MyButton>
 
-        <!-- <UDropdown :items="items" :popper="{ placement: 'bottom-start' }">
-          <template #item="{ item }">
-            <span class="truncate">{{ item.label }}</span>
-
-            <UIcon
-              :name="item.icon"
-              class="flex-shrink-0 h-4 w-4 text-gray-400 dark:text-gray-500 ms-auto"
-            /> </template
-          ><UButton
-            color="white"
-            label="Options"
-            trailing-icon="i-heroicons-chevron-down-20-solid"
-          />
-        </UDropdown> -->
-
-        <MyDropdown v-if="user" position="right" :items="items" />
-
-        <!-- <ul class="flex items-center">
-          <li v-if="!user">
-            <NuxtLink to="/login" class="text-white px-5 py-2">
-              Login
-            </NuxtLink>
-          </li>
-          <li v-if="!user">
-            <NuxtLink to="/register" class="text-white px-4 py-2">
-              Register
-            </NuxtLink>
-          </li>
-
-          <li>
-            <UDropdown :items="items" :popper="{ placement: 'bottom-start' }">
-              <template #item="{ item }">
-                <span class="truncate">{{ item.label }}</span>
-
-                <UIcon
-                  :name="item.icon"
-                  class="flex-shrink-0 h-4 w-4 text-gray-400 dark:text-gray-500 ms-auto"
-                /> </template
-              ><UButton
-                color="white"
-                label="Options"
-                trailing-icon="i-heroicons-chevron-down-20-solid"
-              />
-            </UDropdown>
-          </li>
-        </ul> -->
+            <MyDropdown
+              v-if="user"
+              class="hidden md:block"
+              position="right"
+              label="Conta"
+              variant="secondary"
+              :items="dropdownItems"
+            />
+            <div class="flex flex-col items-end md:hidden">
+              <NuxtLink
+                v-for="(link, index) in dropdownItems"
+                :key="index"
+                :to="link.href"
+                class="block rounded px-4 py-2 text-lg text-white hover:bg-gray-600"
+                @click="link.click"
+              >
+                <p class="hidden max-md:block lg:block">{{ link.label }}</p>
+              </NuxtLink>
+            </div>
+          </div>
+        </div>
       </div>
     </nav>
   </div>
