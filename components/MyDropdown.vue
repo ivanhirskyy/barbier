@@ -1,9 +1,11 @@
 <script setup lang="ts">
 const props = defineProps<{
   position: 'left' | 'right' | 'center';
+  label: string;
+  variant: 'primary' | 'secondary';
   items: {
     label: string;
-    href: string;
+    href?: string;
     click?: () => void;
     hide?: boolean;
   }[];
@@ -49,19 +51,30 @@ onUnmounted(() => {
 </script>
 <template>
   <div class="relative">
-    <div class="relative">
-      <MyButton label="Options" class="btn-primary" @click="toggle" />
-      <div
-        v-show="open"
-        class="absolute min-w-full w-max w-full z-10 bg-white border border-secondary-200 divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-        :class="getClasses()"
-      >
-        <template v-for="(item, index) in props.items" :key="index">
-          <a :href="item.href" class="block px-12 py-6" @click="item.click">
-            {{ item.label }}
-          </a>
-        </template>
-      </div>
+    <MyButton :label="props.label" :variant="props.variant" @click="toggle">
+      <i
+        class="text-xl"
+        :class="
+          open
+            ? 'i-heroicons-chevron-up-20-solid'
+            : 'i-heroicons-chevron-down-20-solid'
+        "
+      ></i
+    ></MyButton>
+    <div
+      v-show="open"
+      class="absolute z-10 w-full w-max min-w-full divide-y divide-gray-100 overflow-hidden rounded-md border border-secondary-200 bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+      :class="getClasses()"
+    >
+      <template v-for="(item, index) in props.items" :key="index">
+        <a
+          :href="item.href"
+          class="block cursor-pointer px-6 py-2 hover:bg-gray-50"
+          @click="item.click"
+        >
+          {{ item.label }}
+        </a>
+      </template>
     </div>
   </div>
 </template>

@@ -11,14 +11,15 @@ type StrapiSuccess = Strapi4ResponseMany<unknown>;
 type StrapiError = Strapi4Error;
 
 export const useApi = () => {
+  const strapi_jwt = useStrapiToken();
   const config = useRuntimeConfig();
   const apiURL = config.public.API_BASE_URL;
-  const accessToken = config.public.STRAPI_JWT;
+  /* const accessToken = config.public.STRAPI_JWT; */
 
   const apiRequest = $fetch.create({
-    baseURL: apiURL + '/api/',
+    baseURL: apiURL + '/api',
     headers: {
-      Authorization: `Bearer ${accessToken}`,
+      Authorization: strapi_jwt.value ? `Bearer ${strapi_jwt.value}` : '',
     },
   });
 

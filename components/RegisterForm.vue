@@ -1,82 +1,68 @@
 <script lang="ts" setup>
-import { z } from 'zod';
-import type { FormSubmitEvent } from '#ui/types';
-import type { TAuthResponse } from '~/types';
+import { set, z } from 'zod';
 
-const { apiRequest } = useApi();
 const toast = useToast();
-const strapi_jwt = useStrapiToken();
-const user = useStrapiUser();
+const { register } = useStrapiAuth();
 
 const isLoading = ref(false);
 const form = ref();
-
-type Schema = z.output<typeof schema>;
-const schema = z.object({
-  email: z.string().email('Tem de ser um email válido'),
-  password: z.string().min(8, 'Tem de ter pelo menos 8 caracteres'),
-  phone: z.string().min(9, 'Tem de ter pelo menos 9 caracteres'),
-});
-
 const currentTimestamp = Date.now().toString();
 
-const state = reactive({
-  email: undefined,
+const registerData = reactive({
+  email: '',
   username: useId() + currentTimestamp,
-  password: undefined,
-  phone: undefined,
+  password: '',
+  phone: '',
 });
 
-const onSubmit = async (event: FormSubmitEvent<Schema>) => {
+/* type Schema = z.output<typeof schema>; */
+const schema = z.object({
+  email: z.string().email('Tem de ser um email válido'),
+  password: z.string().min(4, 'Tem de ter pelo menos 4 caracteres'),
+  phone: z.string().min(9, 'Tem de ter menos 9 caracteres'),
+});
+
+const setErrors = (message: string, path?: string) => {
+  form.value.setErrors([
+    {
+      message,
+      path,
+    },
+  ]);
+};
+
+const onSubmit = async () => {
   form.value.clear();
   isLoading.value = true;
+
   try {
-    const response = await apiRequest<TAuthResponse>('/auth/local/register', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(event.data),
-    });
+    await register(registerData);
 
-    if ('error' in response) {
-      throw response.error;
-    }
-
-    toast.add({ title: 'Success', description: 'Registado com sucesso' });
-
-    strapi_jwt.value = response.jwt;
-    user.value = response.user;
+    toast.add({ title: 'Success', description: 'Login com sucesso' });
 
     navigateTo('/');
   } catch (err) {
-    if (typeof err === 'object' && err !== null) {
-      if ('statusCode' in err && 'message' in err) {
-        console.log(err.message);
-
-        if (err.statusCode === 400) {
-          form.value.setErrors([
-            {
-              message: 'Email or password is invalid',
-              path: 'error',
-            },
-          ]);
-        } else {
-          form.value.setErrors([
-            {
-              message:
-                'Ocorreu um erro inesperado no registo, tente mais tarde.' ||
-                err.message,
-              path: 'error',
-            },
-          ]);
-        }
+    if (
+      typeof err === 'object' &&
+      err !== null &&
+      'error' in err &&
+      err.error !== null &&
+      typeof err.error === 'object' &&
+      err.error !== null &&
+      'status' in err.error &&
+      'message' in err.error
+    ) {
+      if (err.error.status === 400) {
+        setErrors('Email ou palavra passe errados.', 'error');
+      } else {
+        setErrors(
+          'Ocorreu um erro inesperado no login, tente mais tarde.' ||
+            err.error.message,
+          'error',
+        );
       }
-      toast.add({
-        title: 'Erro',
-        description:
-          'Ocorreu um erro no registo, por favor verifique os campos.',
-      });
+    } else {
+      setErrors('Ocorreu um erro inesperado no login, tente mais tarde.');
     }
   }
 
@@ -88,42 +74,43 @@ const onSubmit = async (event: FormSubmitEvent<Schema>) => {
   <UForm
     ref="form"
     :schema="schema"
-    :state="state"
-    class="space-y-4 bg-white rounded shadow-xl p-8"
-    @submit.prevent="onSubmit"
+    :state="registerData"
+    class="space-y-4"
+    @submit="onSubmit"
     @error="
-      toast.add({
+      /* toast.add({
         title: 'Erro',
         description: 'Ocorreu um erro no login, por favor verifique os campos.',
-      })
+      }) */
+      console.log('error')
     "
   >
     <UFormGroup label="Email" name="email">
-      <UInput v-model="state.email" placeholder="Insira o seu email..." />
+      <UInput
+        v-model="registerData.email"
+        placeholder="Insira o seu email..."
+      />
     </UFormGroup>
 
     <UFormGroup label="Telemóvel" name="phone">
       <UInput
-        v-model="state.phone"
+        v-model="registerData.phone"
         placeholder="Insira o seu número de telemóvel..."
       />
     </UFormGroup>
 
     <UFormGroup label="Password" name="password">
       <UInput
-        v-model="state.password"
+        v-model="registerData.password"
         placeholder="Insira a sua password..."
         type="password"
       />
     </UFormGroup>
 
-    <UFormGroup label="" name="error"></UFormGroup>
+    <UFormGroup name="error"></UFormGroup>
 
-    <MyButton
-      class="btn-primary btn-sm"
-      label="submit"
-      type="submit"
-      :loading="isLoading"
-    ></MyButton>
+    <MyButton class="btn-primary btn-sm" type="submit" :loading="isLoading"
+      >Criar conta</MyButton
+    >
   </UForm>
 </template>

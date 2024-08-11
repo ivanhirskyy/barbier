@@ -1,11 +1,15 @@
-<script lang="ts" setup>
-const { logout } = useStrapiAuth();
+<script setup lang="ts">
+import UserAuth from '~/components/UserAuth.vue';
 
-const onLogout = () => {
-  logout();
-  navigateTo('/login');
-};
+const modal = useModal();
+
+function openModalAuth() {
+  modal.open(UserAuth);
+}
+
+openModalAuth();
 </script>
+
 <template>
   <div class="layout">
     <NavBar />

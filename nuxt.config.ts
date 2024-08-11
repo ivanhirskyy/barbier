@@ -3,13 +3,31 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       API_BASE_URL: process.env.NUXT_PUBLIC_API_BASE_URL,
-      STRAPI_JWT: process.env.STRAPI_JWT,
     },
   },
-  modules: ['@vueuse/nuxt', '@nuxtjs/strapi', '@nuxt/ui', '@nuxt/image'],
+  devtools: {
+    enabled: false,
+  },
+  modules: [
+    '@vueuse/nuxt',
+    '@nuxtjs/strapi',
+    '@nuxt/ui',
+    '@nuxt/image',
+    'nuxt-swiper',
+    '@samk-dev/nuxt-vcalendar',
+  ],
+  swiper: {
+    modules: ['autoplay'],
+  },
   strapi: {
     url: process.env.NUXT_PUBLIC_API_BASE_URL,
-    cookieName: 'strapi_jwt',
+    /* cookieName: 'strapi_jwt', */
+    cookie: {
+      path: '/',
+      maxAge: 14 * 24 * 60 * 60,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: true,
+    },
   },
   app: {
     head: {

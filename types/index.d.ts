@@ -1,3 +1,5 @@
+import type { Strapi4ResponseMany } from '@nuxtjs/strapi';
+
 export type TAuthResponseSuccess = {
   jwt: string;
   user: {
@@ -20,3 +22,15 @@ export type TAuthResponseError = {
 };
 
 export type TAuthResponse = TAuthResponseSuccess | TAuthResponseError;
+
+export type SR<T> = Strapi4ResponseMany<T>;
+
+export type TMyButton = {
+  icon?: string;
+  link?: string;
+  type?: 'button' | 'submit';
+  size?: 'sm' | 'md' | 'lg';
+  variant?: 'primary' | 'secondary' | 'tertiary' | 'link';
+  loading?: boolean;
+  text?: string;
+};
