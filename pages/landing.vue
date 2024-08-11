@@ -47,7 +47,7 @@ const buttons: TMyButton[] = [
 <template>
   <div class="flex min-h-screen flex-col items-center justify-center gap-8 p-8">
     <NuxtImg
-      src="/login-banner.webp"
+      src="./login-banner.webp"
       alt="Login Banner"
       class="absolute -z-10 h-full w-full object-cover brightness-[.3]"
     />
@@ -56,7 +56,7 @@ const buttons: TMyButton[] = [
       to="/"
       class="absolute top-8 shrink-0 overflow-hidden rounded shadow-logo shadow-yellow-500"
     >
-      <NuxtImg class="rounded" src="./logo.webp" alt="Logo" height="50" />
+      <NuxtImg class="h-50 rounded" src="./logo.webp" alt="Logo" height="50" />
     </NuxtLink>
 
     <div class="w-full max-w-md space-y-6">
