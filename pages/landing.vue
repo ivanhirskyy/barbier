@@ -11,7 +11,6 @@ const buttons: TMyButton[] = [
     size: 'lg',
     link: '/',
     icon: 'i-heroicons-calendar-days-solid text-2xl',
-    target: '_blank',
     text: 'Marcações',
   },
   {
@@ -54,7 +53,7 @@ const buttons: TMyButton[] = [
     <NuxtImg
       src="./login-banner.webp"
       alt="Login Banner"
-      class="absolute -z-10 h-full w-full object-cover brightness-[.25]"
+      class="absolute -z-10 h-[100dvh] w-[100dvw] object-cover brightness-[.25]"
     />
 
     <NuxtLink

@@ -37,16 +37,14 @@ const slots = useSlots();
             </p>
             <slot name="header"></slot>
 
-            <MyButton
-              variant="link"
-              size="icon"
-              class="hover:bg-gray-100 dark:hover:bg-gray-600"
+            <button
+              class="rounded hover:bg-gray-100 dark:hover:bg-gray-600"
               @click="closeModal(id)"
             >
               <i
-                class="i-heroicons-x-mark-20-solid text-2xl text-black dark:text-white"
+                class="i-heroicons-x-mark-20-solid block text-2xl text-black dark:text-white"
               ></i>
-            </MyButton>
+            </button>
           </div>
 
           <div class="px-2.5 py-5 md:px-4">
