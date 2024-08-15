@@ -5,6 +5,11 @@ export default defineNuxtRouteMiddleware((to, from) => {
     useCookie('redirect', { path: '/' }).value = to.fullPath;
     return navigateTo('/login');
   } */
+  const protectedRoutes = ['profile', 'admin'];
 
-  return navigateTo('/landing');
+  if (protectedRoutes.includes(to.path.replace('/', '')) && !user.value) {
+    return navigateTo('/');
+  }
+
+  /* return navigateTo('/landing'); */
 });

@@ -1,70 +1,50 @@
 <script setup lang="ts">
 import { useDraggable } from '@vueuse/core';
+import BookingModal from './BookingModal.vue';
 
 const route = useRoute();
 const { logout } = useStrapiAuth();
-const user = useStrapiUser();
+/* const user = useStrapiUser(); */
+const user = useSupabaseUser();
+const supabase = useSupabaseClient();
 
-/* const links = [
-  {
-    label: 'Horizontal Navigation',
-    to: `${route.path.startsWith('/dev') ? '/dev' : ''}/components/horizontal-navigation`,
-  },
-  {
-    label: 'Command Palette',
-    to: '/components/command-palette',
-  },
-  {
-    label: 'Table',
-    to: '/components/table',
-  },
-]; */
+console.log('User', user);
 
-/* const items = computed(() => [
-  [
-    {
-      label: 'Profile',
-      icon: 'i-heroicons-user-circle-20-solid',
-    },
-    {
-      label: 'Edit',
-      icon: 'i-heroicons-pencil-square-20-solid',
-      click: () => {
-        console.log('Edit');
-      },
-    },
-  ],
-  [
-    {
-      label: 'Logout',
-      icon: 'i-heroicons-arrow-right-circle-20-solid',
-      click: () => {
-        logout();
-        navigateTo('/login');
-      },
-      hide: !user.value,
-    },
-  ],
-]); */
+const { openModal } = useModals();
+
+type TDropdownItem = {
+  label: string;
+  icon: string;
+  click?: () => void;
+  href?: string;
+  hide?: boolean;
+};
 
 const dropdownItems = computed(() => {
-  return [
+  if (!user.value) return [];
+  const data: TDropdownItem[] = [
     {
       label: 'Perfil',
-      icon: 'i-heroicons-user-circle-20-solid',
       href: '/profile',
+      icon: 'i-heroicons-user-circle-20-solid',
     },
     {
       label: 'Terminar sessão',
       icon: 'i-heroicons-arrow-right-circle-20-solid',
       click: async () => {
-        await navigateTo('/login');
-        logout();
+        await signOut();
       },
       hide: !user.value,
     },
   ];
+
+  return data;
 });
+
+const signOut = async () => {
+  const { error } = await supabase.auth.signOut();
+  if (error) console.log(error);
+};
 
 const links = [
   {
@@ -86,27 +66,40 @@ const isMenuOpen = ref(false);
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value;
 };
+
+watch(
+  () => route.path,
+  () => {
+    isMenuOpen.value = false;
+  },
+);
+
+watch(
+  () => user.value,
+  () => {
+    isMenuOpen.value = false;
+  },
+);
 </script>
 
 <template>
   <div class="sticky top-0 z-10">
     <nav class="bg-gray-800">
       <div
-        class="container mx-auto flex h-20 items-center gap-8 py-2 transition-all duration-300"
-        :class="user ? 'justify-between' : 'justify-center'"
+        class="container mx-auto flex h-20 items-center justify-between gap-8 py-2 transition-all duration-300"
       >
         <NuxtLink
           to="/"
           class="shrink-0 overflow-hidden rounded shadow-logo shadow-yellow-500"
         >
-          <NuxtImg class="rounded" src="./logo.webp" alt="Logo" height="50" />
+          <NuxtImg
+            class="h-[50px] rounded"
+            src="./logo.webp"
+            alt="Logo"
+            height="50"
+          />
         </NuxtLink>
 
-        <button class="md:hidden" @click="toggleMenu">
-          <i
-            class="i-heroicons-bars-3-bottom-right-20-solid block cursor-pointer text-4xl text-white"
-          ></i>
-        </button>
         <div
           class="absolute right-0 top-20 flex h-[calc(100dvh-5rem)] w-full grow flex-col items-end gap-8 bg-gray-950 p-6 md:static md:h-auto md:flex-row md:items-center md:justify-between md:bg-inherit md:p-0"
           :class="isMenuOpen ? 'block' : 'max-md:hidden'"
@@ -124,15 +117,17 @@ const toggleMenu = () => {
 
           <div class="flex flex-col items-end gap-8 md:flex-row md:gap-4">
             <MyButton
-              v-if="user"
-              class="max-sm:hidden"
-              icon="i-heroicons-plus-circle-20-solid"
               variant="primary"
-              ><p class="hidden max-md:block lg:block">Faça a sua reserva</p>
+              class="hidden md:flex"
+              @click="openModal('BookingModal')"
+            >
+              <p class="hidden max-md:block lg:block">Faça a sua reserva</p>
               <i
                 class="i-heroicons-calendar-days-solid text-2xl transition-all"
               ></i>
             </MyButton>
+
+            <!-- v-if="user" -->
 
             <MyDropdown
               v-if="user"
@@ -142,6 +137,16 @@ const toggleMenu = () => {
               variant="secondary"
               :items="dropdownItems"
             />
+            <MyButton
+              v-else
+              variant="secondary"
+              @click="openModal('AuthModal')"
+            >
+              <p class="hidden max-md:block lg:block">Entrar</p>
+              <i
+                class="i-heroicons-arrow-right-circle-20-solid text-2xl transition-all"
+              ></i>
+            </MyButton>
             <div class="flex flex-col items-end md:hidden">
               <NuxtLink
                 v-for="(link, index) in dropdownItems"
@@ -154,6 +159,20 @@ const toggleMenu = () => {
               </NuxtLink>
             </div>
           </div>
+        </div>
+        <div class="flex gap-8 md:hidden">
+          <MyButton
+            variant="primary"
+            size="icon"
+            @click="openModal('PhoneModal')"
+          >
+            <i class="i-heroicons-phone-solid text-xl transition-all"></i>
+          </MyButton>
+          <button class="block" @click="toggleMenu">
+            <i
+              class="i-heroicons-bars-3-bottom-right-20-solid block cursor-pointer text-4xl text-white"
+            ></i>
+          </button>
         </div>
       </div>
     </nav>

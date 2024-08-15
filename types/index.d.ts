@@ -28,9 +28,22 @@ export type SR<T> = Strapi4ResponseMany<T>;
 export type TMyButton = {
   icon?: string;
   link?: string;
+  target?: '_blank' | '_self';
   type?: 'button' | 'submit';
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'sm' | 'md' | 'lg' | 'icon';
   variant?: 'primary' | 'secondary' | 'tertiary' | 'link';
   loading?: boolean;
   text?: string;
+};
+
+export interface IModal {
+  id: string;
+  title: string;
+  isOpen: boolean;
+}
+
+export type TBarber = {
+  id: number;
+  name: string;
+  avatar: string;
 };
