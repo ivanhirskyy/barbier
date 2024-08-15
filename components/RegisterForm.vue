@@ -4,22 +4,25 @@ import { set, z } from 'zod';
 const toast = useToast();
 const { register } = useStrapiAuth();
 
+const supabase = useSupabaseClient();
+
+const { registerUser } = useFirebaseAuth();
+
 const isLoading = ref(false);
 const form = ref();
 const currentTimestamp = Date.now().toString();
+const emit = defineEmits(['onSubmit']);
 
 const registerData = reactive({
   email: '',
   username: useId() + currentTimestamp,
   password: '',
-  phone: '',
 });
 
 /* type Schema = z.output<typeof schema>; */
 const schema = z.object({
   email: z.string().email('Tem de ser um email válido'),
-  password: z.string().min(4, 'Tem de ter pelo menos 4 caracteres'),
-  phone: z.string().min(9, 'Tem de ter menos 9 caracteres'),
+  password: z.string().min(6, 'Tem de ter pelo menos 6 caracteres'),
 });
 
 const setErrors = (message: string, path?: string) => {
@@ -36,11 +39,18 @@ const onSubmit = async () => {
   isLoading.value = true;
 
   try {
-    await register(registerData);
+    /* await register(registerData); */
 
-    toast.add({ title: 'Success', description: 'Login com sucesso' });
+    /* await registerUser(registerData.email, registerData.password); */
 
-    navigateTo('/');
+    await supabase.auth.signUp({
+      email: registerData.email,
+      password: registerData.password,
+    });
+
+    toast.add({ title: 'Success', description: 'Conta criada com sucesso' });
+
+    emit('onSubmit');
   } catch (err) {
     if (
       typeof err === 'object' &&
@@ -89,13 +99,6 @@ const onSubmit = async () => {
       <UInput
         v-model="registerData.email"
         placeholder="Insira o seu email..."
-      />
-    </UFormGroup>
-
-    <UFormGroup label="Telemóvel" name="phone">
-      <UInput
-        v-model="registerData.phone"
-        placeholder="Insira o seu número de telemóvel..."
       />
     </UFormGroup>
 

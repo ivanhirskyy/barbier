@@ -3,6 +3,8 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       API_BASE_URL: process.env.NUXT_PUBLIC_API_BASE_URL,
+      SUPABASE_URL: process.env.NUXT_PUBLIC_SUPABASE_URL,
+      SUPABASE_KEY: process.env.NUXT_PUBLIC_SUPABASE_KEY,
     },
   },
   devtools: {
@@ -15,9 +17,15 @@ export default defineNuxtConfig({
     '@nuxt/image',
     'nuxt-swiper',
     '@samk-dev/nuxt-vcalendar',
+    '@nuxtjs/supabase',
   ],
   swiper: {
     modules: ['autoplay'],
+  },
+  supabase: {
+    url: process.env.NUXT_PUBLIC_SUPABASE_URL,
+    key: process.env.NUXT_PUBLIC_SUPABASE_KEY,
+    redirect: false,
   },
   strapi: {
     url: process.env.NUXT_PUBLIC_API_BASE_URL,

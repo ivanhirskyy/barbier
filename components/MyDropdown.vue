@@ -51,9 +51,15 @@ onUnmounted(() => {
 </script>
 <template>
   <div class="relative">
-    <MyButton :label="props.label" :variant="props.variant" @click="toggle">
+    <MyButton
+      :label="props.label"
+      size="icon"
+      :variant="props.variant"
+      @click="toggle"
+    >
+      <i class="i-heroicons-user-circle-20-solid text-2xl"></i>
       <i
-        class="text-xl"
+        class="text-2xl"
         :class="
           open
             ? 'i-heroicons-chevron-up-20-solid'
@@ -63,17 +69,17 @@ onUnmounted(() => {
     ></MyButton>
     <div
       v-show="open"
-      class="absolute z-10 w-full w-max min-w-full divide-y divide-gray-100 overflow-hidden rounded-md border border-secondary-200 bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+      class="absolute top-full z-10 mt-[1px] w-full w-max min-w-full divide-y divide-gray-100 overflow-hidden rounded-md border border-secondary-200 bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:divide-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:ring-gray-900"
       :class="getClasses()"
     >
       <template v-for="(item, index) in props.items" :key="index">
-        <a
-          :href="item.href"
-          class="block cursor-pointer px-6 py-2 hover:bg-gray-50"
+        <NuxtLink
+          :to="item.href"
+          class="block cursor-pointer px-6 py-2 hover:bg-gray-50 dark:hover:bg-gray-700"
           @click="item.click"
         >
           {{ item.label }}
-        </a>
+        </NuxtLink>
       </template>
     </div>
   </div>

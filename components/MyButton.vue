@@ -27,6 +27,8 @@ const getClassesBySize = () => {
   }
 
   switch (props.size) {
+    case 'icon':
+      return 'px-2 py-2';
     case 'lg':
       return 'px-8 py-3 text-lg min-h-12';
     case 'sm':
@@ -60,8 +62,6 @@ const getClassesByVariant = () => {
     v-bind="getProps()"
   >
     <slot></slot>
-    <i v-if="props.icon" :class="props.icon"></i>
-    <p v-if="props.text">{{ props.text }}</p>
     <span
       v-if="props.loading"
       class="absolute flex h-full w-full items-center justify-center bg-inherit"

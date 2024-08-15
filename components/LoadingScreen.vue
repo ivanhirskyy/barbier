@@ -13,7 +13,7 @@ nuxtApp.hook('page:finish', () => {
   <Transition>
     <div
       v-show="loading"
-      class="fixed left-0 top-0 z-50 flex h-full w-full items-center justify-center bg-white opacity-80"
+      class="fixed left-0 top-0 z-50 flex h-full w-full items-center justify-center bg-white opacity-80 dark:bg-gray-800"
     >
       <BarberPole />
     </div>

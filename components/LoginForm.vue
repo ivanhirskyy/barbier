@@ -3,9 +3,11 @@ import { z } from 'zod';
 
 const toast = useToast();
 const { login } = useStrapiAuth();
+const supabase = useSupabaseClient();
 
 const isLoading = ref(false);
 const form = ref();
+const emit = defineEmits(['onSubmit']);
 
 const loginData = reactive({
   identifier: '',
@@ -15,7 +17,7 @@ const loginData = reactive({
 /* type Schema = z.output<typeof schema>; */
 const schema = z.object({
   identifier: z.string().email('Tem de ser um email válido'),
-  password: z.string().min(4, 'Tem de ter pelo menos 4 caracteres'),
+  password: z.string().min(6, 'Tem de ter pelo menos 6 caracteres'),
 });
 
 const setErrors = (message: string, path?: string) => {
@@ -32,11 +34,15 @@ const onSubmit = async () => {
   isLoading.value = true;
 
   try {
-    await login(loginData);
+    /* await login(loginData); */
+    await supabase.auth.signInWithPassword({
+      email: loginData.identifier,
+      password: loginData.password,
+    });
 
     toast.add({ title: 'Success', description: 'Login com sucesso' });
 
-    navigateTo('/');
+    emit('onSubmit');
   } catch (err) {
     if (
       typeof err === 'object' &&
@@ -98,8 +104,6 @@ const onSubmit = async () => {
 
     <UFormGroup name="error"></UFormGroup>
 
-    <MyButton class="btn-primary" type="submit" :loading="isLoading"
-      >Entrar</MyButton
-    >
+    <MyButton type="submit" :loading="isLoading">Entrar</MyButton>
   </UForm>
 </template>

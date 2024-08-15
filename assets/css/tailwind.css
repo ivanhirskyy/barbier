@@ -6,6 +6,10 @@
   font-size: 62.5%;
 } */
 
+html.dark{
+  @apply bg-gray-950;
+}
+
 body {
   @apply text-base;
   @apply font-system;
