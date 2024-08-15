@@ -162,6 +162,7 @@ watch(
         </div>
         <div class="flex gap-8 md:hidden">
           <MyButton
+            v-if="user"
             variant="primary"
             size="icon"
             @click="openModal('PhoneModal')"

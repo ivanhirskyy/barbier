@@ -98,7 +98,7 @@ const searchSchedules = inject('schedules') as () => void;
           v-for="(day, index) in weekDays"
           :key="index"
           :class="[
-            'flex flex-1 cursor-pointer flex-col items-center gap-2 rounded-md px-1.5 py-1.5 transition hover:bg-gray-500 hover:text-white md:px-4 md:py-2',
+            'flex flex-1 cursor-pointer flex-col items-center gap-2 rounded-md px-1.5 py-1.5 transition hover:bg-gray-500 md:px-4 md:py-2',
             {
               'bg-gray-400': isToday(day.date) && !isCurrentDate(day.date),
             },
