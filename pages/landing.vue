@@ -49,7 +49,9 @@ const buttons: TMyButton[] = [
 </script>
 
 <template>
-  <div class="flex min-h-screen flex-col items-center justify-center gap-8 p-8">
+  <div
+    class="flex max-h-[100dvh] min-h-[100dvh] flex-col items-center justify-center gap-8 p-8"
+  >
     <NuxtImg
       src="./login-banner.webp"
       alt="Login Banner"
