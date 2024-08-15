@@ -1,5 +1,6 @@
 export default defineNuxtRouteMiddleware((to, from) => {
-  const user = useStrapiUser();
+  /*  const user = useStrapiUser(); */
+  const user = useSupabaseUser();
   console.log('user', user.value);
   /* if (!user.value) {
     useCookie('redirect', { path: '/' }).value = to.fullPath;

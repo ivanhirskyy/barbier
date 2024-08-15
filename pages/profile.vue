@@ -29,14 +29,14 @@ const updateUser = async () => {
       <div class="flex flex-col gap-4">
         <h1 class="text-2xl font-bold">Perfil</h1>
         <div class="flex flex-col gap-4">
-          <!-- <div class="flex flex-col gap-2">
+          <div class="flex flex-col gap-2">
             <label for="email">Email</label>
             <p>{{ user.email }}</p>
           </div>
           <div class="flex flex-col gap-2">
             <label for="phone">Telemovel</label>
             <p>{{ user.phone }}</p>
-          </div> -->
+          </div>
         </div>
       </div>
     </UCard>
