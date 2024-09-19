@@ -1,4 +1,4 @@
-# ✂️ Barbier - Your Ultimate Barbershop Booking Platform
+# ✂️ Barbier - Your Ultimate Barbershop Booking Platform (Ongoing)
 
 Welcome to **Barbier**, a platform designed to make booking your next barbershop appointment effortless! Barbier streamlines the process of finding your preferred barber, selecting services, and scheduling appointments — all from your phone. The platform features seamless authentication, user-friendly appointment booking, and comprehensive details about the barbershop.
 
